@@ -3,9 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"net/http"
 )
-import "github.com/gin-gonic/gin"
 
 func main() {
 	fmt.Println("123")
@@ -102,7 +102,7 @@ func main() {
 
 	// 获取json参数
 	r.POST("/user/json", func(c *gin.Context) {
-		b, err := c.GetRawData()
+		b, err := c.GetRawData() // 从c.Request.Body读取请求数据
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "fail"})
 			return
@@ -117,6 +117,54 @@ func main() {
 		username := c.Param("username")
 		address := c.Param("address")
 		c.JSON(http.StatusOK, gin.H{"message": "ok", "username": username, "age": address})
+	})
+
+	// 参数绑定
+	type Login struct {
+		User     string `form:"user" json:"user" binding:"required"`
+		Password string `form:"password" json:"password" binding:"required"`
+	}
+
+	// 绑定json的示例 ({"user": "q1mi", "password": "123456"})
+	r.POST("/loginJson", func(c *gin.Context) {
+		var login Login
+		if err := c.ShouldBind(&login); err == nil {
+			fmt.Printf("login info: %#v\n", login)
+			c.JSON(http.StatusOK, gin.H{
+				"user":     login.User,
+				"password": login.Password,
+			})
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
+		}
+	})
+
+	// 绑定form表单示例(user=q1mi&password=123456)
+	r.POST("/loginForm", func(c *gin.Context) {
+		var login Login
+		// ShouldBind()会根据请求的Content-Type自行选择绑定器
+		if err := c.ShouldBind(&login); err == nil {
+			fmt.Printf("login info: %#v\n", login)
+			c.JSON(http.StatusOK, gin.H{
+				"user":     login.User,
+				"passowrd": login.Password,
+			})
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
+		}
+	})
+
+	// 绑定queryString示例 (/loginQuery?user=q1mi&password=123456)
+	r.GET("/loginQuery", func(c *gin.Context) {
+		var login Login
+		if err := c.ShouldBind(&login); err == nil {
+			c.JSON(http.StatusOK, gin.H{
+				"user":     login.User,
+				"password": login.Password,
+			})
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
+		}
 	})
 
 	r.Run()
