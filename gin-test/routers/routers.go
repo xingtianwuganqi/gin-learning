@@ -14,5 +14,14 @@ func RegisterRouter() *gin.Engine {
 		userRouter.GET("/find", handler.FindUnDelete)
 		userRouter.PUT("/update", handler.UpdateUser)
 	}
+
+	cityRouter := r.Group("/city/v1")
+	{
+		cityRouter.GET("/level", handler.FindCityHandler)
+		cityRouter.GET("/info", handler.GetSubInfo)
+		cityRouter.GET("/level/info", handler.GetSubCitys)
+		cityRouter.GET("/city", handler.GetCityCode)
+	}
+
 	return r
 }

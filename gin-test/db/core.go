@@ -36,6 +36,6 @@ func GetDB() *gorm.DB {
 }
 
 func autoMigrateTable() {
-	DB.AutoMigrate(&models.User{}, &models.Author{}, &models.Blog{})
+	DB.AutoMigrate(&models.SubLevel{}, &models.City{})
 	fmt.Println("自动迁移数据表")
 }
