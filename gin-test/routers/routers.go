@@ -23,5 +23,12 @@ func RegisterRouter() *gin.Engine {
 		cityRouter.GET("/city", handler.GetCityCode)
 	}
 
+	positionRouter := r.Group("position/v1")
+	{
+		positionRouter.GET("/local", handler.ReadLocalTxtFile)
+		positionRouter.GET("/list", handler.PositionSearch)
+		positionRouter.POST("/sublevel", handler.SubLevelSearch)
+	}
+
 	return r
 }
