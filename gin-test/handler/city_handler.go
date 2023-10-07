@@ -104,6 +104,7 @@ func GetSubCitys(c *gin.Context) {
 		})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"data": subs,
